@@ -4,5 +4,6 @@ __pycache__/
 !records.csv
 dumps/
 *.png
+!figures/wrist-a.png
 *.mp4
 .venv/
