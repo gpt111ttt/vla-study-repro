@@ -29,6 +29,8 @@ S = 6
 MM = 175.0  # printed width of every figure
 
 INK = (26, 26, 26)
+NONE_FILL = (176, 176, 176)   # luminance 176
+PLACE_FILL = (120, 32, 24)     # luminance 52, BLUE is 84
 GREY = (110, 110, 110)
 LGREY = (222, 222, 222)
 BLUE = (47, 93, 138)
@@ -125,7 +127,7 @@ class Canvas:
 
 
 # --------------------------------------------------------------------- fig 1
-def fig1():
+def fig_spread():
     W, H = 700, 400
     L, R, T, B = 92, 34, 70, 74
     pw, ph = W - L - R, H - T - B
@@ -182,7 +184,7 @@ def fig1():
 
 
 # --------------------------------------------------------------------- fig 2
-def fig2():
+def fig_task_bars():
     W, H = 760, 440
     L0, gap = 74, 46
     pw = (W - L0 - 22 - gap) / 2.0
@@ -190,7 +192,7 @@ def fig2():
     ph = H - T - B
     c = Canvas(W, H, "fig2")
     panels = [(K30, "(a) 30k steps"), (K50, "(b) 50k steps")]
-    colours = {"none": GREY, "cont": BLUE, "place": RED}
+    colours = {"none": NONE_FILL, "cont": BLUE, "place": PLACE_FILL}
 
     for pi, (data, lab) in enumerate(panels):
         L = L0 + pi * (pw + gap)
@@ -219,11 +221,11 @@ def fig2():
         x = lx + k * 150
         c.rect([x * S, (ly - 7) * S, (x + 15) * S, (ly + 7) * S], fill=colours[arm])
         c.txt(x + 24, ly, arm, 15, anchor="lm")
-    c.fig("fig2-task-bars.png")
+    c.fig("fig4-task-bars.png")
 
 
 # --------------------------------------------------------------------- fig 3
-def fig3():
+def fig_pixel_chain():
     W, H = 900, 470
     c = Canvas(W, H, "fig3")
 
@@ -234,7 +236,7 @@ def fig3():
     def PA(x, y):
         return ax + side * x / 256.0, ay + side * y / 256.0
 
-    c.txt(ax, ay - 16, "(a) wrist camera", 15, anchor="lm", bold=True)
+    c.txt(ax, ay - 16, "(a) wrist camera", 16, anchor="lm", bold=True)
     # Lossless source. The earlier wrist-frame.jpg differed from this frame in 31328 of
     # 65536 pixels (max 15 levels) and read 44 where the data holds 45, which is the exact
     # magnitude the figure is about.
@@ -245,9 +247,9 @@ def fig3():
     c.d.ellipse([(mx - 8) * S, (my - 8) * S, (mx + 8) * S, (my + 8) * S],
                 outline=RED, width=2 * S)
     lx = ax + side / 2
-    c.txt(lx, ay + side + 26, "256 x 256, rendered frame", 15, fill=GREY)
-    c.txt(lx, ay + side + 55, "2 px of 65536", 15, fill=RED, bold=True)
-    c.txt(lx, ay + side + 80, "differ by 1 level", 15, fill=RED)
+    c.txt(lx, ay + side + 26, "256 x 256, rendered frame", 16, fill=GREY)
+    c.txt(lx, ay + side + 55, "2 px of 65536", 16, fill=RED, bold=True)
+    c.txt(lx, ay + side + 80, "differ by 1 level", 16, fill=RED)
 
     # ---- (b) divergence along the chunk
     perstep = [0.0158, 0.0127, 0.0107, 0.013, 0.0068, 0.0059, 0.0093, 0.0039, 0.0068,
@@ -265,20 +267,20 @@ def fig3():
     def PBY(v):
         return by + bh - bh * v / 0.017
 
-    c.txt(bx, by - 16, "(b) first action chunk", 15, anchor="lm", bold=True)
-    c.vtxt(bx - 65, by + bh / 2, "max |delta|", 15)
+    c.txt(bx, by - 16, "(b) first action chunk", 16, anchor="lm", bold=True)
+    c.vtxt(bx - 65, by + bh / 2, "max |delta|", 16)
     for v in (0, 0.005, 0.010, 0.015):
         c.line([(bx * S, PBY(v) * S), ((bx + bw) * S, PBY(v) * S)], fill=LGREY, width=S)
-        c.txt(bx - 8, PBY(v), "%.3f" % v, 15, anchor="rm", fill=GREY)
+        c.txt(bx - 8, PBY(v), "%.3f" % v, 16, anchor="rm", fill=GREY)
     c.line([(bx * S, by * S), (bx * S, (by + bh) * S)], fill=INK, width=S)
     c.line([(bx * S, (by + bh) * S), ((bx + bw) * S, (by + bh) * S)], fill=INK, width=S)
     pts = [(PBX(i) * S, PBY(v) * S) for i, v in enumerate(perstep)]
     c.line(pts, fill=BLUE, width=int(1.8 * S), joint="curve")
-    c.txt(PBX(0) + 10, PBY(perstep[0]) - 16, "%.4f" % perstep[0], 15, anchor="lm",
+    c.txt(PBX(0) + 10, PBY(perstep[0]) - 16, "%.4f" % perstep[0], 16, anchor="lm",
           fill=BLUE, bold=True)
     for i in (0, 25, 49):
-        c.txt(PBX(i), by + bh + 18, str(i), 15, fill=GREY)
-    c.txt(bx + bw / 2, by + bh + 42, "action step", 15, fill=GREY)
+        c.txt(PBX(i), by + bh + 18, str(i), 16, fill=GREY)
+    c.txt(bx + bw / 2, by + bh + 42, "action step", 16, fill=GREY)
 
     # ---- (c) which dimensions move
     perdim = [0.0059, 0.0029, 0.0039, 0.0112, 0.0088, 0.0158, 0.0072, 0.0057, 0.0039,
@@ -291,10 +293,10 @@ def fig3():
     def CCY(v):
         return cy + bh - bh * v / 0.017
 
-    c.txt(cx, cy - 16, "(c) 32 dims", 15, anchor="lm", bold=True)
+    c.txt(cx, cy - 16, "(c) 32 dims", 16, anchor="lm", bold=True)
     for v in (0, 0.005, 0.010, 0.015):
         c.line([(cx * S, CCY(v) * S), ((cx + cw) * S, CCY(v) * S)], fill=LGREY, width=S)
-        c.txt(cx - 8, CCY(v), "%.3f" % v, 15, anchor="rm", fill=GREY)
+        c.txt(cx - 8, CCY(v), "%.3f" % v, 16, anchor="rm", fill=GREY)
     c.line([(cx * S, cy * S), (cx * S, (cy + bh) * S)], fill=INK, width=S)
     c.line([(cx * S, (cy + bh) * S), ((cx + cw) * S, (cy + bh) * S)], fill=INK, width=S)
     gw = cw / 32.0
@@ -303,16 +305,16 @@ def fig3():
         c.rect([(cx + gw * i + 0.5) * S, CCY(v) * S, (cx + gw * (i + 1) - 0.5) * S,
                 (cy + bh) * S], fill=BLUE if i < 7 else GREY)
     c.line([(cx * S, cy * S), ((cx + 7 * gw) * S, cy * S)], fill=BLUE, width=S)
-    c.txt(cx + 3.5 * gw, cy + bh + 18, "real", 15, fill=BLUE)
-    c.txt(cx + 19 * gw, cy + bh + 18, "padding", 15, fill=GREY)
-    c.txt(cx + 3.5 * gw, cy + bh + 40, "0-6", 15, fill=BLUE)
-    c.txt(cx + 19 * gw, cy + bh + 40, "7-31", 15, fill=GREY)
-    c.txt(cx + cw / 2, cy + bh + 65, "dimension", 15, fill=GREY)
-    c.fig("fig3-pixel-chain.png")
+    c.txt(cx + 3.5 * gw, cy + bh + 18, "real", 16, fill=BLUE)
+    c.txt(cx + 19 * gw, cy + bh + 18, "padding", 16, fill=GREY)
+    c.txt(cx + 3.5 * gw, cy + bh + 40, "0-6", 16, fill=BLUE)
+    c.txt(cx + 19 * gw, cy + bh + 40, "7-31", 16, fill=GREY)
+    c.txt(cx + cw / 2, cy + bh + 65, "dimension", 16, fill=GREY)
+    c.fig("fig2-pixel-chain.png")
 
 
 # --------------------------------------------------------------------- fig 4
-def fig4():
+def fig_sweep():
     W, H = 880, 470
     c = Canvas(W, H, "fig4")
     steps = [1, 2, 4, 8, 16, 32]
@@ -376,11 +378,11 @@ def fig4():
             c.txt(TX + 62 + cww * j + cww / 2, y, str(v), 15, anchor="mm",
                   fill=INK if v else (140, 140, 140))
     c.txt(TX + 62 + cww * 3, TY - 54, "step", 15, fill=GREY)
-    c.fig("fig4-quantiser-sweep.png")
+    c.fig("fig3-quantiser-sweep.png")
 
 
 if __name__ == "__main__":
-    fig1()
-    fig2()
-    fig3()
-    fig4()
+    fig_spread()
+    fig_pixel_chain()
+    fig_sweep()
+    fig_task_bars()
