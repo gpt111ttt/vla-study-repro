@@ -23,9 +23,15 @@ import re
 import sys
 
 TAG = re.compile(r"^(?:out_)?(?P<run>.+?)_t(?P<task>\d+)$")
+# out_t0 .. out_t9 are one suite, one task per directory, so this has to be tried before
+# the generic pattern, which would otherwise read them as run="out".
+BARE = re.compile(r"^(?:out_)?t(?P<task>\d+)$")
 
 
 def parse_tag(dirname):
+    m = BARE.match(dirname)
+    if m:
+        return "t", int(m.group("task"))
     m = TAG.match(dirname)
     if not m:
         return None

@@ -49,6 +49,12 @@ rows, so each can be recomputed with a two-line script. The `run` column encodes
 the arm, the repeat index and the seed offset exactly as the launch script named
 them.
 
+Of the 218 runs, 82 cover the whole suite and contribute 300 rows each. The rest
+are dumps of the first observation taken for the mechanism section, which need one
+episode and therefore contribute a handful of rows. The ten directories
+`out_t0` ... `out_t9` are one suite, one task per directory, and appear as the
+single run label `t`.
+
 ## Reproducing one number
 
 ```bash
