@@ -16,6 +16,15 @@ from PIL import Image, ImageDraw, ImageFont
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figs")
 os.makedirs(OUT, exist_ok=True)
+
+
+def _src(name):
+    """Find a source image: the output directory first, then next to this script."""
+    for d in (OUT, os.path.dirname(os.path.abspath(__file__))):
+        p = os.path.join(d, name)
+        if os.path.exists(p):
+            return p
+    raise SystemExit("missing source image: " + name)
 S = 6
 MM = 175.0  # printed width of every figure
 
@@ -226,7 +235,10 @@ def fig3():
         return ax + side * x / 256.0, ay + side * y / 256.0
 
     c.txt(ax, ay - 16, "(a) wrist camera", 15, anchor="lm", bold=True)
-    frame = Image.open(os.path.join(OUT, "wrist-frame.jpg")).convert("RGB")
+    # Lossless source. The earlier wrist-frame.jpg differed from this frame in 31328 of
+    # 65536 pixels (max 15 levels) and read 44 where the data holds 45, which is the exact
+    # magnitude the figure is about.
+    frame = Image.open(_src(os.environ.get("WRIST_SRC", "wrist-a.png"))).convert("RGB")
     c.img.paste(frame.resize((side * S, side * S), Image.LANCZOS), (ax * S, ay * S))
     c.rect([ax * S, ay * S, (ax + side) * S, (ay + side) * S], outline=INK, width=S)
     mx, my = PA(46.5, 65.0)
