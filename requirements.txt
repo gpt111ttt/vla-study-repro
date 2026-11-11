@@ -1,0 +1,8 @@
+# Third-party packages imported directly by the scripts in this package.
+# The evaluation hooks additionally need LIBERO and lerobot; see README.
+numpy
+scipy
+opencv-python
+Pillow
+torch
+transformers
